@@ -18,7 +18,7 @@ Install using pypi
 
 .. code:: bash
 
-    pip install wagtailvideos
+    pip install wagtail-videos
 
 
 Using

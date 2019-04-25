@@ -1,8 +1,9 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
 import json
-
 from django.shortcuts import get_object_or_404, render
 from django.urls import reverse
-from wagtail.admin.forms import SearchForm
+from wagtail.admin.forms.search import SearchForm
 from wagtail.admin.modal_workflow import render_modal_workflow
 from wagtail.admin.utils import PermissionPolicyChecker, popular_tags_for_model
 from wagtail.core.models import Collection
@@ -40,8 +41,8 @@ def chooser(request):
 
     q = None
     if (
-        'q' in request.GET or 'p' in request.GET or 'tag' in request.GET or
-        'collection_id' in request.GET
+            'q' in request.GET or 'p' in request.GET or 'tag' in request.GET or
+            'collection_id' in request.GET
     ):
         # this request is triggered from search, pagination or 'popular tags';
         # we will just render the results.html fragment

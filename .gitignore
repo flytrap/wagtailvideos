@@ -7,3 +7,4 @@ venv/
 tests.sqlite3
 .tox
 build/
+.idea/

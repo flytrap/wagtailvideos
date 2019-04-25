@@ -7,7 +7,6 @@ import subprocess
 import tempfile
 import threading
 from contextlib import contextmanager
-
 from django.conf import settings
 from django.core.exceptions import SuspiciousFileOperation
 from django.core.files.base import ContentFile
@@ -23,6 +22,7 @@ from django.utils.translation import ugettext_lazy as _
 from enumchoicefield import ChoiceEnum, EnumChoiceField
 from taggit.managers import TaggableManager
 from wagtail.admin.utils import get_object_usage
+from wagtail.core.fields import RichTextField
 from wagtail.core.models import CollectionMember
 from wagtail.search import index
 from wagtail.search.queryset import SearchableQuerySetMixin
@@ -85,6 +85,7 @@ class AbstractVideo(CollectionMember, index.Indexed, models.Model):
         settings.AUTH_USER_MODEL, verbose_name=_('uploaded by user'),
         null=True, blank=True, editable=False, on_delete=models.SET_NULL
     )
+    description = RichTextField(_('description'), null=True, blank=True)
 
     tags = TaggableManager(help_text=None, blank=True, verbose_name=_('tags'))
 
@@ -94,6 +95,7 @@ class AbstractVideo(CollectionMember, index.Indexed, models.Model):
 
     search_fields = list(CollectionMember.search_fields) + [
         index.SearchField('title', partial_match=True, boost=10),
+        index.SearchField('description', partial_match=True, boost=10),
         index.RelatedFields('tags', [
             index.SearchField('name', partial_match=True, boost=10),
         ]),
@@ -142,7 +144,7 @@ class AbstractVideo(CollectionMember, index.Indexed, models.Model):
 
     @property
     def formatted_duration(self):
-        if(self.duration):
+        if (self.duration):
             hours, remainder = divmod(self.duration.seconds, 3600)
             minutes, seconds = divmod(remainder, 60)
             return "%d:%02d:%02d" % (hours, minutes, seconds)
@@ -177,10 +179,10 @@ class AbstractVideo(CollectionMember, index.Indexed, models.Model):
         return cls.transcodes.rel.related_model
 
     def get_transcode(self, media_format):
-        Transcode = self.get_transcode_model()
+        trans_code = self.get_transcode_model()
         try:
             return self.transcodes.get(media_format=media_format)
-        except Transcode.DoesNotExist:
+        except trans_code.DoesNotExist:
             return self.do_transcode(media_format)
 
     def video_tag(self, attrs=None):
@@ -204,7 +206,7 @@ class AbstractVideo(CollectionMember, index.Indexed, models.Model):
         return mark_safe(
             "<video {0}>\n{1}\n</video>".format(flatatt(attrs), "\n".join(sources)))
 
-    def do_transcode(self, media_format, quality):
+    def do_transcode(self, media_format, quality=None):
         transcode, created = self.transcodes.get_or_create(
             media_format=media_format,
         )
@@ -230,6 +232,7 @@ class Video(AbstractVideo):
         'file',
         'collection',
         'thumbnail',
+        'description',
         'tags',
     )
 

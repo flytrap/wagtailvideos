@@ -2,20 +2,19 @@
 """
 Install wagtailvideos using setuptools
 """
+from setuptools import find_packages, setup
 
 with open('README.rst', 'r') as f:
     readme = f.read()
 
-from setuptools import find_packages, setup
-
 setup(
-    name='wagtailvideos',
-    version='2.0.1',
+    name='wagtail-videos',
+    version='2.1.0',
     description="A wagtail module for uploading and displaying videos in various codecs.",
     long_description=readme,
     author='Takeflight',
     author_email='developers@takeflight.com.au',
-    url='https://github.com/takeflight/wagtailvideos',
+    url='https://github.com/flytrap/wagtailvideos',
 
     install_requires=[
         'wagtail>=2.0',
@@ -34,8 +33,6 @@ setup(
 
     include_package_data=True,
     package_data={},
-
-
 
     classifiers=[
         'Environment :: Web Environment',
